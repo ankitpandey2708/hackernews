@@ -1,14 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ExternalLink, MessageSquare } from 'lucide-react';
 import { format, subWeeks } from 'date-fns';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-const fetchHNStories = async () => {
+const ITEMS_PER_PAGE = 30;
+
+const fetchHNStories = async ({ pageParam = 0 }) => {
   const oneWeekAgo = Math.floor(subWeeks(new Date(), 1).getTime() / 1000);
-  const response = await fetch(`https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=created_at_i>${oneWeekAgo}&hitsPerPage=1000`);
+  const response = await fetch(`https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=created_at_i>${oneWeekAgo},points>=10&hitsPerPage=${ITEMS_PER_PAGE}&page=${pageParam}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -17,21 +19,34 @@ const fetchHNStories = async () => {
 
 const HackerNews = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredStories, setFilteredStories] = useState([]);
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isError,
+    error
+  } = useInfiniteQuery({
     queryKey: ['hnStories'],
     queryFn: fetchHNStories,
+    getNextPageParam: (lastPage, pages) => lastPage.page + 1,
   });
 
-  const sortedAndFilteredStories = useMemo(() => {
+  const filterStories = useCallback(() => {
     if (!data) return [];
-    return data.hits
-      .filter(story => story.points >= 10)
-      .sort((a, b) => b.points - a.points)
-      .filter(story => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    const allStories = data.pages.flatMap(page => page.hits);
+    return allStories.filter(story =>
+      story.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }, [data, searchTerm]);
 
-  if (error) return <div>An error occurred: {error.message}</div>;
+  useEffect(() => {
+    setFilteredStories(filterStories());
+  }, [filterStories, data]);
+
+  if (isError) return <div>An error occurred: {error.message}</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -59,37 +74,44 @@ const HackerNews = () => {
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {sortedAndFilteredStories.map((story) => (
-            <Card key={story.objectID}>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  <a
-                    href={story.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    {story.title}
-                  </a>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-500 mb-2">
-                  Upvotes: {story.points} | {' '}
-                  <a
-                    href={`https://news.ycombinator.com/item?id=${story.objectID}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    Created: {format(new Date(story.created_at), 'MMM d, yyyy')}
-                  </a>
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <InfiniteScroll
+          dataLength={filteredStories.length}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={<h4>Loading...</h4>}
+        >
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredStories.map((story) => (
+              <Card key={story.objectID}>
+                <CardHeader>
+                  <CardTitle className="text-lg">
+                    <a
+                      href={story.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {story.title}
+                    </a>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Upvotes: {story.points} | {' '}
+                    <a
+                      href={`https://news.ycombinator.com/item?id=${story.objectID}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Created: {format(new Date(story.created_at), 'MMM d, yyyy')}
+                    </a>
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </InfiniteScroll>
       )}
     </div>
   );
