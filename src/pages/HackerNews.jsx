@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink } from 'lucide-react';
 
 const fetchHNStories = async () => {
-  const response = await fetch('https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=100');
+  const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+  const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=100&numericFilters=created_at_i>${oneWeekAgo}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -15,7 +15,6 @@ const fetchHNStories = async () => {
 };
 
 const HackerNews = () => {
-  const [sortBy, setSortBy] = useState('default');
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data, isLoading, error } = useQuery({
@@ -25,12 +24,7 @@ const HackerNews = () => {
 
   if (error) return <div>An error occurred: {error.message}</div>;
 
-  const sortedStories = data?.hits.slice().sort((a, b) => {
-    if (sortBy === 'upvotes') {
-      return b.points - a.points;
-    }
-    return 0;
-  });
+  const sortedStories = data?.hits.slice().sort((a, b) => b.points - a.points);
 
   const filteredStories = sortedStories?.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -38,8 +32,8 @@ const HackerNews = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Top 100 Hacker News Stories</h1>
-      <div className="mb-4 flex gap-4">
+      <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week)</h1>
+      <div className="mb-4">
         <Input
           type="text"
           placeholder="Search stories..."
@@ -47,11 +41,6 @@ const HackerNews = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
-        <Button
-          onClick={() => setSortBy(sortBy === 'default' ? 'upvotes' : 'default')}
-        >
-          Sort by {sortBy === 'default' ? 'Upvotes' : 'Default'}
-        </Button>
       </div>
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
