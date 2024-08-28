@@ -26,6 +26,7 @@ const HackerNews = () => {
   const sortedAndFilteredStories = useMemo(() => {
     if (!data) return [];
     return data.hits
+      .filter(story => story.points >= 10)
       .sort((a, b) => b.points - a.points)
       .filter(story => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [data, searchTerm]);
@@ -34,7 +35,7 @@ const HackerNews = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week)</h1>
+      <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, 10+ Upvotes)</h1>
       <div className="mb-4">
         <Input
           type="text"
