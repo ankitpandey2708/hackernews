@@ -7,7 +7,7 @@ import { format, subWeeks } from 'date-fns';
 
 const fetchHNStories = async () => {
   const oneWeekAgo = Math.floor(subWeeks(new Date(), 1).getTime() / 1000);
-  const response = await fetch(`https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=created_at_i>${oneWeekAgo},points>=10&hitsPerPage=100`);
+  const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=story&numericFilters=created_at_i>${oneWeekAgo},points>=10&hitsPerPage=1000`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -16,7 +16,7 @@ const fetchHNStories = async () => {
 
 const HackerNews = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredStories, setFilteredStories] = useState([]);
+  const [sortedStories, setSortedStories] = useState([]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['hnStories'],
@@ -25,12 +25,14 @@ const HackerNews = () => {
 
   useEffect(() => {
     if (data) {
-      const filtered = data.hits.filter(story =>
-        story.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredStories(filtered);
+      const sorted = [...data.hits].sort((a, b) => b.points - a.points);
+      setSortedStories(sorted);
     }
-  }, [data, searchTerm]);
+  }, [data]);
+
+  const filteredStories = sortedStories.filter(story =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (isError) return <div>An error occurred: {error.message}</div>;
 
