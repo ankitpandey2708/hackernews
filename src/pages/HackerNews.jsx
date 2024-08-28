@@ -67,14 +67,18 @@ const HackerNews = () => {
             <Card key={story.objectID}>
               <CardHeader>
                 <CardTitle className="text-lg">
-                  <a
-                    href={story.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    {story.title}
-                  </a>
+                  {story.url ? (
+                    <a
+                      href={story.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {story.title}
+                    </a>
+                  ) : (
+                    <span className="text-black">{story.title}</span>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
