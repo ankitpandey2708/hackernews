@@ -63,30 +63,29 @@ const HackerNews = () => {
           {sortedAndFilteredStories.map((story) => (
             <Card key={story.objectID}>
               <CardHeader>
-                <CardTitle className="text-lg">{story.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-500 mb-2">
-                  Upvotes: {story.points} | Created: {format(new Date(story.created_at), 'MMM d, yyyy')}
-                </p>
-                <div className="flex flex-col space-y-2">
+                <CardTitle className="text-lg">
                   <a
                     href={story.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline flex items-center"
+                    className="text-blue-500 hover:underline"
                   >
-                    Read more <ExternalLink className="ml-1 h-4 w-4" />
+                    {story.title}
                   </a>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500 mb-2">
+                  Upvotes: {story.points} | {' '}
                   <a
                     href={`https://news.ycombinator.com/item?id=${story.objectID}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline flex items-center"
+                    className="text-blue-500 hover:underline"
                   >
-                    HN Discussion <MessageSquare className="ml-1 h-4 w-4" />
+                    Created: {format(new Date(story.created_at), 'MMM d, yyyy')}
                   </a>
-                </div>
+                </p>
               </CardContent>
             </Card>
           ))}
