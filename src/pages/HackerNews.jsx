@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink, MessageSquare } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, subWeeks } from 'date-fns';
 
 const fetchHNStories = async () => {
-  const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
-  const response = await fetch(`https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=100&numericFilters=created_at_i>${oneWeekAgo}`);
+  const oneWeekAgo = Math.floor(subWeeks(new Date(), 1).getTime() / 1000);
+  const response = await fetch(`https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=created_at_i>${oneWeekAgo}&hitsPerPage=1000`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -23,13 +23,14 @@ const HackerNews = () => {
     queryFn: fetchHNStories,
   });
 
+  const sortedAndFilteredStories = useMemo(() => {
+    if (!data) return [];
+    return data.hits
+      .sort((a, b) => b.points - a.points)
+      .filter(story => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [data, searchTerm]);
+
   if (error) return <div>An error occurred: {error.message}</div>;
-
-  const sortedStories = data?.hits.slice().sort((a, b) => b.points - a.points);
-
-  const filteredStories = sortedStories?.filter(story =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="container mx-auto p-4">
@@ -58,7 +59,7 @@ const HackerNews = () => {
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredStories?.map((story) => (
+          {sortedAndFilteredStories.map((story) => (
             <Card key={story.objectID}>
               <CardHeader>
                 <CardTitle className="text-lg">{story.title}</CardTitle>
