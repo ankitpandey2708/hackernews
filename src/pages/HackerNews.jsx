@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, subWeeks } from 'date-fns';
+import { X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 const fetchHNStories = async () => {
   const oneWeekAgo = Math.floor(subWeeks(new Date(), 1).getTime() / 1000);
@@ -21,6 +23,10 @@ const HackerNews = () => {
     const saved = localStorage.getItem('clickedLinks');
     return saved ? JSON.parse(saved) : {};
   });
+  const [removedStories, setRemovedStories] = useState(() => {
+    const saved = localStorage.getItem('removedStories');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['hnStories'],
@@ -31,18 +37,27 @@ const HackerNews = () => {
     if (data) {
       const sorted = [...data.hits]
         .sort((a, b) => b.points - a.points)
-        .filter(story => !clickedLinks[story.url]);
+        .filter(story => !clickedLinks[story.url] && !removedStories[story.objectID]);
       setSortedStories(sorted);
     }
-  }, [data, clickedLinks]);
+  }, [data, clickedLinks, removedStories]);
 
   useEffect(() => {
     localStorage.setItem('clickedLinks', JSON.stringify(clickedLinks));
   }, [clickedLinks]);
 
+  useEffect(() => {
+    localStorage.setItem('removedStories', JSON.stringify(removedStories));
+  }, [removedStories]);
+
   const handleLinkClick = (url) => {
     setClickedLinks(prev => ({ ...prev, [url]: true }));
     setSortedStories(prev => prev.filter(story => story.url !== url));
+  };
+
+  const handleRemoveStory = (storyId) => {
+    setRemovedStories(prev => ({ ...prev, [storyId]: true }));
+    setSortedStories(prev => prev.filter(story => story.objectID !== storyId));
   };
 
   const filteredStories = sortedStories.filter(story =>
@@ -79,9 +94,17 @@ const HackerNews = () => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredStories.map((story) => (
-            <Card key={story.objectID}>
+            <Card key={story.objectID} className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                onClick={() => handleRemoveStory(story.objectID)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
               <CardHeader>
-                <CardTitle className="text-lg">
+                <CardTitle className="text-lg pr-8">
                   {story.url ? (
                     <a
                       href={story.url}
