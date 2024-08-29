@@ -29,10 +29,12 @@ const HackerNews = () => {
 
   useEffect(() => {
     if (data) {
-      const sorted = [...data.hits].sort((a, b) => b.points - a.points);
+      const sorted = [...data.hits]
+        .sort((a, b) => b.points - a.points)
+        .filter(story => !clickedLinks[story.url]);
       setSortedStories(sorted);
     }
-  }, [data]);
+  }, [data, clickedLinks]);
 
   useEffect(() => {
     localStorage.setItem('clickedLinks', JSON.stringify(clickedLinks));
@@ -40,6 +42,7 @@ const HackerNews = () => {
 
   const handleLinkClick = (url) => {
     setClickedLinks(prev => ({ ...prev, [url]: true }));
+    setSortedStories(prev => prev.filter(story => story.url !== url));
   };
 
   const filteredStories = sortedStories.filter(story =>
