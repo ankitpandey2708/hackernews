@@ -17,6 +17,10 @@ const fetchHNStories = async () => {
 const HackerNews = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortedStories, setSortedStories] = useState([]);
+  const [clickedLinks, setClickedLinks] = useState(() => {
+    const saved = localStorage.getItem('clickedLinks');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['hnStories'],
@@ -29,6 +33,14 @@ const HackerNews = () => {
       setSortedStories(sorted);
     }
   }, [data]);
+
+  useEffect(() => {
+    localStorage.setItem('clickedLinks', JSON.stringify(clickedLinks));
+  }, [clickedLinks]);
+
+  const handleLinkClick = (url) => {
+    setClickedLinks(prev => ({ ...prev, [url]: true }));
+  };
 
   const filteredStories = sortedStories.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,7 +84,12 @@ const HackerNews = () => {
                       href={story.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
+                      className={`${
+                        clickedLinks[story.url]
+                          ? 'text-gray-500 no-underline hover:no-underline'
+                          : 'text-blue-500 hover:underline'
+                      }`}
+                      onClick={() => handleLinkClick(story.url)}
                     >
                       {story.title}
                     </a>
