@@ -1,5 +1,4 @@
-import { HomeIcon, NewspaperIcon } from "lucide-react";
-import Index from "./pages/Index.jsx";
+import { NewspaperIcon } from "lucide-react";
 import HackerNews from "./pages/HackerNews.jsx";
 
 /**
@@ -7,14 +6,8 @@ import HackerNews from "./pages/HackerNews.jsx";
  */
 export const navItems = [
   {
-    title: "Home",
-    to: "/",
-    icon: <HomeIcon className="h-4 w-4" />,
-    page: <Index />,
-  },
-  {
     title: "Hacker News",
-    to: "/hacker-news",
+    to: "/",
     icon: <NewspaperIcon className="h-4 w-4" />,
     page: <HackerNews />,
   },
