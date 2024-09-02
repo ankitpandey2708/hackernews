@@ -16,6 +16,72 @@ const fetchHNStories = async () => {
   return response.json();
 };
 
-// ... rest of the component code ...
+const HackerNews = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [removedStories, setRemovedStories] = useState([]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['hackerNewsStories'],
+    queryFn: fetchHNStories,
+  });
+
+  useEffect(() => {
+    const storedRemovedStories = localStorage.getItem('removedStories');
+    if (storedRemovedStories) {
+      setRemovedStories(JSON.parse(storedRemovedStories));
+    }
+  }, []);
+
+  const handleRemoveStory = (storyId) => {
+    const updatedRemovedStories = [...removedStories, storyId];
+    setRemovedStories(updatedRemovedStories);
+    localStorage.setItem('removedStories', JSON.stringify(updatedRemovedStories));
+  };
+
+  const filteredStories = data?.hits.filter(story => 
+    story.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    !removedStories.includes(story.objectID)
+  ) || [];
+
+  if (isLoading) return <div className="p-4"><Skeleton className="w-full h-12" /></div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>;
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Hacker News Top Stories</h1>
+      <Input
+        type="text"
+        placeholder="Search stories..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4"
+      />
+      {filteredStories.map((story) => (
+        <Card key={story.objectID} className="mb-4">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-lg font-semibold">
+              <a href={story.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                {story.title}
+              </a>
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleRemoveStory(story.objectID)}
+              className="text-red-500 hover:bg-red-100"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500">
+              {story.points} points | by {story.author} | {format(new Date(story.created_at), 'PPp')}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};
 
 export default HackerNews;
