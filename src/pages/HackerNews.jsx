@@ -28,7 +28,13 @@ const HackerNews = () => {
   useEffect(() => {
     const storedRemovedStories = localStorage.getItem('removedStories');
     if (storedRemovedStories) {
-      setRemovedStories(JSON.parse(storedRemovedStories));
+      try {
+        const parsedStories = JSON.parse(storedRemovedStories);
+        setRemovedStories(Array.isArray(parsedStories) ? parsedStories : []);
+      } catch (e) {
+        console.error('Error parsing removedStories from localStorage:', e);
+        setRemovedStories([]);
+      }
     }
   }, []);
 
