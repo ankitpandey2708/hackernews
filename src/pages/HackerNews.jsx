@@ -37,7 +37,7 @@ const HackerNews = () => {
     if (data) {
       const sorted = [...data.hits]
         .sort((a, b) => b.points - a.points)
-        .filter(story => !clickedLinks[story.url] && !removedStories[story.objectID]);
+        .filter(story => !clickedLinks[story.objectID] && !removedStories[story.objectID]);
       setSortedStories(sorted);
     }
   }, [data, clickedLinks, removedStories]);
@@ -50,9 +50,9 @@ const HackerNews = () => {
     localStorage.setItem('removedStories', JSON.stringify(removedStories));
   }, [removedStories]);
 
-  const handleLinkClick = (url) => {
-    setClickedLinks(prev => ({ ...prev, [url]: true }));
-    setSortedStories(prev => prev.filter(story => story.url !== url));
+  const handleLinkClick = (objectID) => {
+    setClickedLinks(prev => ({ ...prev, [objectID]: true }));
+    setSortedStories(prev => prev.filter(story => story.objectID !== objectID));
   };
 
   const handleRemoveStory = (storyId) => {
@@ -111,11 +111,11 @@ const HackerNews = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`${
-                        clickedLinks[story.url]
+                        clickedLinks[story.objectID]
                           ? 'text-gray-500 no-underline hover:no-underline'
                           : 'text-blue-500 hover:underline'
                       }`}
-                      onClick={() => handleLinkClick(story.url)}
+                      onClick={() => handleLinkClick(story.objectID)}
                     >
                       {story.title}
                     </a>
