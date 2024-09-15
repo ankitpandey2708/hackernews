@@ -76,6 +76,7 @@ const HackerNews = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
+          autofocus
         />
       </div>
       {isLoading ? (
