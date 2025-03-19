@@ -61,7 +61,8 @@ const HackerNews = () => {
   };
 
   const filteredStories = sortedStories.filter(story =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+    (story.title && story.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (story.url && story.url.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (isError) return <div>An error occurred: {error.message}</div>;
