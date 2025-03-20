@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, subWeeks } from 'date-fns';
 import { X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import GitHubBadge from '@/components/GitHubBadge';
 
 const fetchHNStories = async () => {
   const oneWeekAgo = Math.floor(subWeeks(new Date(), 1).getTime() / 1000);
@@ -69,6 +70,7 @@ const HackerNews = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <GitHubBadge />
       <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, 10+ Upvotes)</h1>
       <div className="mb-4">
         <Input
