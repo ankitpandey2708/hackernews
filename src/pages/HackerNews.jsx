@@ -105,10 +105,10 @@ const HackerNews = () => {
   const filteredStories = useMemo(() => {
     if (!searchTerm.trim()) return sortedStories;
     
-    // Split search terms by comma and trim whitespace
+    // Split search terms by comma and not using trim()
     const searchTerms = searchTerm
       .split(',')
-      .map(term => term.trim().toLowerCase())
+      .map(term => term.toLowerCase())
       .filter(term => term.length > 0);
     
     if (searchTerms.length === 0) return sortedStories;
