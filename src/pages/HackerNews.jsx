@@ -103,10 +103,25 @@ const HackerNews = () => {
   }, [data, clickedLinks, removedStories]);
 
   const filteredStories = useMemo(() => {
-    return sortedStories.filter(story =>
-      (story.title && story.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (story.url && story.url.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    if (!searchTerm.trim()) return sortedStories;
+    
+    // Split search terms by comma and trim whitespace
+    const searchTerms = searchTerm
+      .split(',')
+      .map(term => term.trim().toLowerCase())
+      .filter(term => term.length > 0);
+    
+    if (searchTerms.length === 0) return sortedStories;
+    
+    return sortedStories.filter(story => {
+      const title = story.title ? story.title.toLowerCase() : '';
+      const url = story.url ? story.url.toLowerCase() : '';
+      
+      // Return true if ANY of the search terms match (OR logic)
+      return searchTerms.some(term => 
+        title.includes(term) || url.includes(term)
+      );
+    });
   }, [sortedStories, searchTerm]);
 
   const handleLinkClick = (objectID) => {
@@ -125,7 +140,7 @@ const HackerNews = () => {
         <div className="mb-4">
           <Input
             type="text"
-            placeholder="Search stories..."
+            placeholder="Search stories (comma-separated for multiple terms)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
