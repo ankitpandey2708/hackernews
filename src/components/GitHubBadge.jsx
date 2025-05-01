@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const GitHubBadge = () => {
   return (
     <a
-      href="https://github.com/ankitpandey2708/dhbvn-web"
+      href="https://github.com/ankitpandey2708/hackernews"
       className="fixed top-0 right-0 z-[100]"
       target="_blank"
       rel="noopener noreferrer"
