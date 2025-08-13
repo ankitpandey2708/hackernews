@@ -136,7 +136,7 @@ const HackerNews = () => {
     <ErrorBoundary>
       <div className="container mx-auto p-4">
         <GitHubBadge />
-        <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, 10+ Upvotes)</h1>
+        <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, 15+ Upvotes)</h1>
         <div className="mb-4">
           <Input
             type="text"
