@@ -86,12 +86,13 @@ const ErrorMessage = ({ error, onRetry }) => (
 
 const HackerNews = () => {
   const [searchTerm, setSearchTerm] = useState('hn:,llm,gpt,claude,gemini,open,fast,tube,github,crunch,reddit,mcp,agent,ai ,rag ,cursor');
+  const [minPoints, setMinPoints] = useState('');
   const [clickedLinks, setClickedLinks] = useLocalStorage('clickedLinks', {});
   const [removedStories, setRemovedStories] = useLocalStorage('removedStories', {});
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['hnStories'],
-    queryFn: fetchHNStories,
+    queryKey: ['hnStories', minPoints],
+    queryFn: () => fetchHNStories(minPoints ? parseInt(minPoints) : 15),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
@@ -136,8 +137,8 @@ const HackerNews = () => {
     <ErrorBoundary>
       <div className="container mx-auto p-4">
         <GitHubBadge />
-        <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, 15+ Upvotes)</h1>
-        <div className="mb-4">
+        <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, {minPoints || 15}+ Upvotes)</h1>
+        <div className="mb-4 flex gap-4">
           <Input
             type="text"
             placeholder="Search stories (comma-separated for multiple terms)..."
@@ -146,6 +147,15 @@ const HackerNews = () => {
             className="max-w-sm"
             autoFocus
             aria-label="Search stories"
+          />
+          <Input
+            type="number"
+            placeholder="Min upvotes (default: 15)"
+            value={minPoints}
+            onChange={(e) => setMinPoints(e.target.value)}
+            className="max-w-40"
+            min="1"
+            aria-label="Minimum upvotes"
           />
         </div>
         {isLoading ? (
