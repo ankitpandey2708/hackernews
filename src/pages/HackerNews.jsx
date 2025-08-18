@@ -152,8 +152,13 @@ const HackerNews = () => {
             type="number"
             placeholder="Min upvotes (default: 15)"
             value={minPoints}
-            onChange={(e) => setMinPoints(e.target.value)}
-            className="max-w-40"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || (parseInt(value) > 0)) {
+                setMinPoints(value);
+              }
+            }}
+            className="max-w-48"
             min="1"
             aria-label="Minimum upvotes"
           />
