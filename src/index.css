@@ -33,6 +33,32 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+    
+    /* Enhanced shadow system following principle 8 */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    
+    /* Consistent spacing system following principle 1 (4px/8px scale) */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem;  /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem;    /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem;  /* 24px */
+    --spacing-8: 2rem;    /* 32px */
+    --spacing-12: 3rem;   /* 48px */
+    --spacing-16: 4rem;   /* 64px */
+    
+    /* Typography scale following principle 2 */
+    --text-xs: 0.75rem;   /* 12px */
+    --text-sm: 0.875rem;  /* 14px */
+    --text-base: 1rem;    /* 16px */
+    --text-lg: 1.25rem;   /* 20px */
+    --text-xl: 1.5rem;    /* 24px */
+    --text-2xl: 1.875rem; /* 30px */
+    --text-3xl: 2.25rem;  /* 36px */
   }
  
   .dark {
@@ -76,31 +102,153 @@
 }
 
 @layer components {
-  /* Story card animations and hover effects */
-  .story-card-hover {
-    @apply transition-all duration-200 hover:shadow-md;
+  /* Principle 1: Consistent spacing system using 4px/8px scale */
+  .space-system {
+    --space-1: var(--spacing-1);
+    --space-2: var(--spacing-2);
+    --space-3: var(--spacing-3);
+    --space-4: var(--spacing-4);
+    --space-6: var(--spacing-6);
+    --space-8: var(--spacing-8);
   }
   
-  /* Subtle remove button that becomes visible on hover */
-  .story-remove-btn {
-    @apply transition-all duration-200 opacity-60 hover:opacity-100;
+  /* Principle 2: Typography hierarchy with consistent line-heights */
+  .text-hierarchy-xs { 
+    font-size: var(--text-xs); 
+    line-height: 1.5; 
+    font-weight: 400;
+  }
+  .text-hierarchy-sm { 
+    font-size: var(--text-sm); 
+    line-height: 1.5; 
+    font-weight: 400;
+  }
+  .text-hierarchy-base { 
+    font-size: var(--text-base); 
+    line-height: 1.6; 
+    font-weight: 400;
+  }
+  .text-hierarchy-lg { 
+    font-size: var(--text-lg); 
+    line-height: 1.6; 
+    font-weight: 500;
+  }
+  .text-hierarchy-xl { 
+    font-size: var(--text-xl); 
+    line-height: 1.5; 
+    font-weight: 600;
+  }
+  .text-hierarchy-2xl { 
+    font-size: var(--text-2xl); 
+    line-height: 1.4; 
+    font-weight: 700;
   }
   
-  /* Link styling for better hierarchy */
+  /* Principle 8: Subtle shadow system for interactive elements */
+  .elevation-1 { box-shadow: var(--shadow-sm); }
+  .elevation-2 { box-shadow: var(--shadow); }
+  .elevation-3 { box-shadow: var(--shadow-md); }
+  .elevation-4 { box-shadow: var(--shadow-lg); }
+  
+  /* Principle 9: Enhanced interactive states */
+  .interactive-element {
+    @apply transition-all duration-200 ease-out;
+  }
+  
+  .interactive-element:hover {
+    @apply elevation-2;
+  }
+  
+  .interactive-element:active {
+    @apply scale-[0.98] elevation-1;
+  }
+  
+  /* Principle 13: Minimum touch targets (44px) */
+  .touch-target {
+    min-height: 2.75rem; /* 44px */
+    min-width: 2.75rem;  /* 44px */
+  }
+  
+  /* Story card enhancements following multiple principles */
+  .story-card-enhanced {
+    @apply interactive-element elevation-1;
+    @apply border-0 bg-card;
+    border-left: 3px solid transparent;
+  }
+  
+  .story-card-enhanced:hover {
+    @apply elevation-2;
+    border-left-color: hsl(var(--primary) / 0.2);
+  }
+  
+  .story-card-external {
+    border-left-color: hsl(var(--primary) / 0.3);
+  }
+  
+  .story-card-discussion {
+    border-left-color: hsl(var(--muted-foreground) / 0.3);
+  }
+  
+  /* Link styling following principles 3 & 4 for hierarchy */
+  .story-link-primary {
+    @apply text-foreground hover:text-primary transition-colors duration-200;
+    text-decoration: none;
+  }
+  
+  .story-link-primary:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+  
   .story-link-visited {
-    @apply text-muted-foreground hover:text-muted-foreground;
+    @apply text-muted-foreground hover:text-foreground transition-colors duration-200;
   }
   
-  .story-link-unvisited {
-    @apply text-foreground hover:text-primary transition-colors;
+  /* Button enhancements following principles 4, 9, 13 */
+  .btn-remove {
+    @apply touch-target opacity-0 group-hover:opacity-60 hover:!opacity-100;
+    @apply hover:bg-destructive/10 hover:text-destructive;
+    @apply transition-all duration-200;
   }
   
-  /* Typography scale following 1.25 ratio */
-  .text-xs { font-size: 0.75rem; line-height: 1.5; }
-  .text-sm { font-size: 0.875rem; line-height: 1.5; }
-  .text-base { font-size: 1rem; line-height: 1.6; }
-  .text-lg { font-size: 1.125rem; line-height: 1.6; }
-  .text-xl { font-size: 1.25rem; line-height: 1.5; }
-  .text-2xl { font-size: 1.5rem; line-height: 1.4; }
-  .text-3xl { font-size: 1.875rem; line-height: 1.3; }
+  /* Form improvements following principle 16 */
+  .form-group {
+    @apply space-y-2;
+  }
+  
+  .form-label {
+    @apply text-hierarchy-sm font-medium text-foreground;
+  }
+  
+  /* Loading state improvements following principle 9 */
+  .skeleton-enhanced {
+    @apply animate-pulse rounded-md bg-muted/60;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted) / 0.4) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes skeleton-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  /* Empty state styling following principle 9 */
+  .empty-state {
+    @apply text-center py-16 px-6;
+  }
+  
+  .empty-state-title {
+    @apply text-hierarchy-lg text-foreground mb-2;
+  }
+  
+  .empty-state-description {
+    @apply text-hierarchy-sm text-muted-foreground max-w-md mx-auto;
+  }
 }

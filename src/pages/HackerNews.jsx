@@ -15,106 +15,115 @@ const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) =>
   const hasExternalUrl = Boolean(story.url);
   
   return (
-    <Card className={`group story-card-hover relative ${hasExternalUrl ? 'border-l-4 border-l-primary/20' : 'border-l-4 border-l-muted'}`}>
+    <div className={`story-card-enhanced group ${hasExternalUrl ? 'story-card-external' : 'story-card-discussion'} p-6 rounded-lg relative`}>
       <Button
         variant="ghost"
         size="icon"
-        className="story-remove-btn absolute top-3 right-3 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+        className="btn-remove absolute top-4 right-4"
         onClick={() => onRemove(story.objectID)}
-        aria-label="Remove story"
+        aria-label={`Remove "${story.title}" from list`}
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-4 w-4" />
       </Button>
       
-      <CardHeader className="pb-3">
-        <div className="flex items-start gap-2">
+      <div className="pr-12">
+        <div className="flex items-start gap-3 mb-4">
           <div className="flex-shrink-0 mt-1">
             {hasExternalUrl ? (
-              <ExternalLink className="h-4 w-4 text-primary" aria-label="External link" />
+              <ExternalLink className="h-4 w-4 text-primary" aria-label="External article" />
             ) : (
-              <MessageSquare className="h-4 w-4 text-muted-foreground" aria-label="Discussion only" />
+              <MessageSquare className="h-4 w-4 text-muted-foreground" aria-label="Discussion thread" />
             )}
           </div>
           
-          <CardTitle className="text-base font-semibold pr-8 leading-tight flex-1">
-            {hasExternalUrl ? (
-              <a
-                href={story.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={
-                  clickedLinks[story.objectID]
-                    ? 'story-link-visited'
-                    : 'story-link-unvisited'
-                }
-                onClick={() => onLinkClick(story.objectID)}
-                aria-label={`Read story: ${story.title}`}
-              >
-                {story.title}
-              </a>
-            ) : (
+          <div className="flex-1 min-w-0">
+            <h3 className="text-hierarchy-base font-semibold leading-tight mb-2">
+              {hasExternalUrl ? (
+                <a
+                  href={story.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={
+                    clickedLinks[story.objectID]
+                      ? 'story-link-visited'
+                      : 'story-link-primary'
+                  }
+                  onClick={() => onLinkClick(story.objectID)}
+                  aria-label={`Read article: ${story.title}`}
+                >
+                  {story.title}
+                </a>
+              ) : (
+                <a
+                  href={getStoryUrl(story.objectID)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="story-link-primary"
+                  aria-label={`View discussion: ${story.title}`}
+                >
+                  {story.title}
+                </a>
+              )}
+            </h3>
+            
+            {hasExternalUrl && (
+              <div className="mb-3">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  External Article
+                </span>
+              </div>
+            )}
+            
+            <div className="flex items-center gap-4 text-hierarchy-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{story.points} upvotes</span>
+              <span className="text-border opacity-50">•</span>
               <a
                 href={getStoryUrl(story.objectID)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-foreground hover:text-primary transition-colors"
-                aria-label={`View discussion: ${story.title}`}
+                className="hover:text-foreground transition-colors duration-200"
+                aria-label={`View on Hacker News - ${format(new Date(story.created_at), 'MMM d, yyyy')}`}
               >
-                {story.title}
+                {format(new Date(story.created_at), 'MMM d, yyyy')}
               </a>
-            )}
-          </CardTitle>
-        </div>
-        
-        {hasExternalUrl && (
-          <div className="ml-6 mt-1">
-            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md font-medium">
-              External Article
-            </span>
+            </div>
           </div>
-        )}
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <div className="flex items-center gap-3 text-sm text-muted-foreground ml-6">
-          <span className="font-medium">{story.points} upvotes</span>
-          <span className="text-border">•</span>
-          <a
-            href={getStoryUrl(story.objectID)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground transition-colors"
-            aria-label="View on Hacker News"
-          >
-            {format(new Date(story.created_at), 'MMM d, yyyy')}
-          </a>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 });
 
 const LoadingSkeleton = () => (
-  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {[...Array(9)].map((_, index) => (
-      <Card key={index}>
-        <CardHeader>
-          <Skeleton className="h-4 w-[250px]" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-4 w-[200px]" />
-        </CardContent>
-      </Card>
+      <div key={index} className="story-card-enhanced p-6">
+        <div className="flex items-start gap-3 mb-4">
+          <Skeleton className="h-4 w-4 rounded-sm flex-shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </div>
+        </div>
+        <div className="ml-7 space-y-3">
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-2" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+      </div>
     ))}
   </div>
 );
 
 const ErrorMessage = ({ error, onRetry }) => (
-  <div className="flex flex-col items-center justify-center p-12">
-    <div className="text-center max-w-md">
-      <h2 className="text-xl font-semibold mb-3 text-foreground">Error Loading Stories</h2>
-      <p className="text-muted-foreground mb-6 leading-relaxed">{error.message}</p>
-      <Button onClick={onRetry} variant="default">
+  <div className="empty-state">
+    <div className="max-w-md mx-auto">
+      <h2 className="empty-state-title">Unable to Load Stories</h2>
+      <p className="empty-state-description mb-8">{error.message}</p>
+      <Button onClick={onRetry} size="lg" className="touch-target">
         Try Again
       </Button>
     </div>
@@ -172,38 +181,41 @@ const HackerNews = () => {
 
   return (
     <ErrorBoundary>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-6 py-8">
         <GitHubBadge />
         
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+        <header className="mb-12">
+          <h1 className="text-hierarchy-2xl text-foreground mb-3">
             Top Hacker News Stories
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-hierarchy-sm text-muted-foreground">
             Last week • {minPoints || 15}+ upvotes
           </p>
         </header>
 
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 min-w-0">
-              <label htmlFor="search" className="block text-sm font-medium text-foreground mb-2">
+        <div className="mb-12 space-y-6">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="form-group flex-1">
+              <label htmlFor="search" className="form-label">
                 Search Stories
               </label>
               <Input
                 id="search"
                 type="text"
-                placeholder="Search by title or URL (comma-separated for multiple terms)"
+                placeholder="Search by title or URL (comma-separated terms)"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
                 autoFocus
-                aria-label="Search stories"
+                aria-describedby="search-help"
               />
+              <p id="search-help" className="text-hierarchy-xs text-muted-foreground mt-1">
+                Use commas to separate multiple search terms
+              </p>
             </div>
-            <div className="w-full sm:w-48">
-              <label htmlFor="upvotes" className="block text-sm font-medium text-foreground mb-2">
-                Min Upvotes
+            <div className="form-group w-full lg:w-48">
+              <label htmlFor="upvotes" className="form-label">
+                Minimum Upvotes
               </label>
               <Input
                 id="upvotes"
@@ -218,8 +230,11 @@ const HackerNews = () => {
                 }}
                 className="w-full"
                 min="1"
-                aria-label="Minimum upvotes"
+                aria-describedby="upvotes-help"
               />
+              <p id="upvotes-help" className="text-hierarchy-xs text-muted-foreground mt-1">
+                Filter by story popularity
+              </p>
             </div>
           </div>
         </div>
@@ -228,14 +243,16 @@ const HackerNews = () => {
         ) : isError ? (
           <ErrorMessage error={error} onRetry={refetch} />
         ) : filteredStories.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg mb-2">No stories found</p>
-            <p className="text-muted-foreground text-sm">
-              Try adjusting your search terms or minimum upvotes
-            </p>
+          <div className="empty-state">
+            <div className="max-w-md mx-auto">
+              <h2 className="empty-state-title">No Stories Found</h2>
+              <p className="empty-state-description">
+                Try adjusting your search terms or lowering the minimum upvotes threshold to see more results.
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {filteredStories.map((story) => (
               <StoryCard
                 key={story.objectID}
