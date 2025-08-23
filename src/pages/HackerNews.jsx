@@ -4,63 +4,95 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from 'date-fns';
-import { X } from 'lucide-react';
+import { X, ExternalLink, MessageSquare } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import GitHubBadge from '@/components/GitHubBadge';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) => (
-  <Card className="group story-card-hover relative">
-    <Button
-      variant="ghost"
-      size="icon"
-      className="story-remove-btn absolute top-3 right-3 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-      onClick={() => onRemove(story.objectID)}
-      aria-label="Remove story"
-    >
-      <X className="h-3.5 w-3.5" />
-    </Button>
-    <CardHeader className="pb-3">
-      <CardTitle className="text-base font-semibold pr-12 leading-tight">
-        {story.url ? (
+const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) => {
+  const hasExternalUrl = Boolean(story.url);
+  
+  return (
+    <Card className={`group story-card-hover relative ${hasExternalUrl ? 'border-l-4 border-l-primary/20' : 'border-l-4 border-l-muted'}`}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="story-remove-btn absolute top-3 right-3 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+        onClick={() => onRemove(story.objectID)}
+        aria-label="Remove story"
+      >
+        <X className="h-3.5 w-3.5" />
+      </Button>
+      
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-2">
+          <div className="flex-shrink-0 mt-1">
+            {hasExternalUrl ? (
+              <ExternalLink className="h-4 w-4 text-primary" aria-label="External link" />
+            ) : (
+              <MessageSquare className="h-4 w-4 text-muted-foreground" aria-label="Discussion only" />
+            )}
+          </div>
+          
+          <CardTitle className="text-base font-semibold pr-8 leading-tight flex-1">
+            {hasExternalUrl ? (
+              <a
+                href={story.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  clickedLinks[story.objectID]
+                    ? 'story-link-visited'
+                    : 'story-link-unvisited'
+                }
+                onClick={() => onLinkClick(story.objectID)}
+                aria-label={`Read story: ${story.title}`}
+              >
+                {story.title}
+              </a>
+            ) : (
+              <a
+                href={getStoryUrl(story.objectID)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-primary transition-colors"
+                aria-label={`View discussion: ${story.title}`}
+              >
+                {story.title}
+              </a>
+            )}
+          </CardTitle>
+        </div>
+        
+        {hasExternalUrl && (
+          <div className="ml-6 mt-1">
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md font-medium">
+              External Article
+            </span>
+          </div>
+        )}
+      </CardHeader>
+      
+      <CardContent className="pt-0">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground ml-6">
+          <span className="font-medium">{story.points} upvotes</span>
+          <span className="text-border">•</span>
           <a
-            href={story.url}
+            href={getStoryUrl(story.objectID)}
             target="_blank"
             rel="noopener noreferrer"
-            className={
-              clickedLinks[story.objectID]
-                ? 'story-link-visited'
-                : 'story-link-unvisited'
-            }
-            onClick={() => onLinkClick(story.objectID)}
-            aria-label={`Read story: ${story.title}`}
+            className="hover:text-foreground transition-colors"
+            aria-label="View on Hacker News"
           >
-            {story.title}
+            {format(new Date(story.created_at), 'MMM d, yyyy')}
           </a>
-        ) : (
-          <span className="text-foreground">{story.title}</span>
-        )}
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="pt-0">
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <span className="font-medium">{story.points} upvotes</span>
-        <span className="text-border">•</span>
-        <a
-          href={getStoryUrl(story.objectID)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-foreground transition-colors"
-          aria-label="View on Hacker News"
-        >
-          {format(new Date(story.created_at), 'MMM d, yyyy')}
-        </a>
-      </div>
-    </CardContent>
-  </Card>
-));
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
 
 const LoadingSkeleton = () => (
   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
