@@ -74,3 +74,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Story card animations and hover effects */
+  .story-card-hover {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+  
+  /* Subtle remove button that becomes visible on hover */
+  .story-remove-btn {
+    @apply transition-all duration-200 opacity-60 hover:opacity-100;
+  }
+  
+  /* Link styling for better hierarchy */
+  .story-link-visited {
+    @apply text-muted-foreground hover:text-muted-foreground;
+  }
+  
+  .story-link-unvisited {
+    @apply text-foreground hover:text-primary transition-colors;
+  }
+  
+  /* Typography scale following 1.25 ratio */
+  .text-xs { font-size: 0.75rem; line-height: 1.5; }
+  .text-sm { font-size: 0.875rem; line-height: 1.5; }
+  .text-base { font-size: 1rem; line-height: 1.6; }
+  .text-lg { font-size: 1.125rem; line-height: 1.6; }
+  .text-xl { font-size: 1.25rem; line-height: 1.5; }
+  .text-2xl { font-size: 1.5rem; line-height: 1.4; }
+  .text-3xl { font-size: 1.875rem; line-height: 1.3; }
+}

@@ -12,51 +12,52 @@ import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) => (
-  <Card className="relative">
+  <Card className="group story-card-hover relative">
     <Button
       variant="ghost"
       size="icon"
-      className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+      className="story-remove-btn absolute top-3 right-3 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
       onClick={() => onRemove(story.objectID)}
       aria-label="Remove story"
     >
-      <X className="h-4 w-4" />
+      <X className="h-3.5 w-3.5" />
     </Button>
-    <CardHeader>
-      <CardTitle className="text-lg pr-8">
+    <CardHeader className="pb-3">
+      <CardTitle className="text-base font-semibold pr-12 leading-tight">
         {story.url ? (
           <a
             href={story.url}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${
+            className={
               clickedLinks[story.objectID]
-                ? 'text-gray-500 no-underline hover:no-underline'
-                : 'text-blue-500 hover:underline'
-            }`}
+                ? 'story-link-visited'
+                : 'story-link-unvisited'
+            }
             onClick={() => onLinkClick(story.objectID)}
             aria-label={`Read story: ${story.title}`}
           >
             {story.title}
           </a>
         ) : (
-          <span className="text-black">{story.title}</span>
+          <span className="text-foreground">{story.title}</span>
         )}
       </CardTitle>
     </CardHeader>
-    <CardContent>
-      <p className="text-sm text-gray-500 mb-2">
-        Upvotes: {story.points} | {' '}
+    <CardContent className="pt-0">
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <span className="font-medium">{story.points} upvotes</span>
+        <span className="text-border">•</span>
         <a
           href={getStoryUrl(story.objectID)}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
+          className="hover:text-foreground transition-colors"
           aria-label="View on Hacker News"
         >
-          Created: {format(new Date(story.created_at), 'MMM d, yyyy')}
+          {format(new Date(story.created_at), 'MMM d, yyyy')}
         </a>
-      </p>
+      </div>
     </CardContent>
   </Card>
 ));
@@ -77,10 +78,14 @@ const LoadingSkeleton = () => (
 );
 
 const ErrorMessage = ({ error, onRetry }) => (
-  <div className="flex flex-col items-center justify-center p-8">
-    <h2 className="text-2xl font-bold mb-4">Error Loading Stories</h2>
-    <p className="text-gray-600 mb-4">{error.message}</p>
-    <Button onClick={onRetry}>Retry</Button>
+  <div className="flex flex-col items-center justify-center p-12">
+    <div className="text-center max-w-md">
+      <h2 className="text-xl font-semibold mb-3 text-foreground">Error Loading Stories</h2>
+      <p className="text-muted-foreground mb-6 leading-relaxed">{error.message}</p>
+      <Button onClick={onRetry} variant="default">
+        Try Again
+      </Button>
+    </div>
   </div>
 );
 
@@ -135,40 +140,70 @@ const HackerNews = () => {
 
   return (
     <ErrorBoundary>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto px-4 py-6">
         <GitHubBadge />
-        <h1 className="text-3xl font-bold mb-6">Top Hacker News Stories (Last Week, {minPoints || 15}+ Upvotes)</h1>
-        <div className="mb-4 flex gap-4">
-          <Input
-            type="text"
-            placeholder="Search stories (comma-separated for multiple terms)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-            autoFocus
-            aria-label="Search stories"
-          />
-          <Input
-            type="number"
-            placeholder="Min upvotes (default: 15)"
-            value={minPoints}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === '' || (parseInt(value) > 0)) {
-                setMinPoints(value);
-              }
-            }}
-            className="max-w-48"
-            min="1"
-            aria-label="Minimum upvotes"
-          />
+        
+        <header className="mb-8">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Top Hacker News Stories
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Last week • {minPoints || 15}+ upvotes
+          </p>
+        </header>
+
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 min-w-0">
+              <label htmlFor="search" className="block text-sm font-medium text-foreground mb-2">
+                Search Stories
+              </label>
+              <Input
+                id="search"
+                type="text"
+                placeholder="Search by title or URL (comma-separated for multiple terms)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+                autoFocus
+                aria-label="Search stories"
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <label htmlFor="upvotes" className="block text-sm font-medium text-foreground mb-2">
+                Min Upvotes
+              </label>
+              <Input
+                id="upvotes"
+                type="number"
+                placeholder="15"
+                value={minPoints}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || (parseInt(value) > 0)) {
+                    setMinPoints(value);
+                  }
+                }}
+                className="w-full"
+                min="1"
+                aria-label="Minimum upvotes"
+              />
+            </div>
+          </div>
         </div>
         {isLoading ? (
           <LoadingSkeleton />
         ) : isError ? (
           <ErrorMessage error={error} onRetry={refetch} />
+        ) : filteredStories.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg mb-2">No stories found</p>
+            <p className="text-muted-foreground text-sm">
+              Try adjusting your search terms or minimum upvotes
+            </p>
+          </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredStories.map((story) => (
               <StoryCard
                 key={story.objectID}
