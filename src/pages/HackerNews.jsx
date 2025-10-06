@@ -136,7 +136,22 @@ const HackerNews = () => {
 
   const sortedStories = useMemo(() => {
     if (!data) return [];
-    return [...data.hits]
+    
+    // Remove duplicates by URL, keeping the older post
+    const urlMap = new Map();
+    data.hits.forEach(story => {
+      if (story.url) {
+        const existing = urlMap.get(story.url);
+        if (!existing || new Date(story.created_at) < new Date(existing.created_at)) {
+          urlMap.set(story.url, story);
+        }
+      } else {
+        // For discussion-only posts without URL, use objectID as unique key
+        urlMap.set(`discussion_${story.objectID}`, story);
+      }
+    });
+    
+    return Array.from(urlMap.values())
       .sort((a, b) => b.points - a.points)
       .filter(story => !clickedLinks[story.objectID] && !removedStories[story.objectID]);
   }, [data, clickedLinks, removedStories]);
