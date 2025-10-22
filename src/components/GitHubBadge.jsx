@@ -37,9 +37,9 @@ const GitHubBadge = () => {
       <style>
         {`
           svg:hover .octo-arm {
-            animation: octocat-wave 560ms ease-in-out;
+            animation: octocat-wave 300ms ease-in-out;
           }
-          
+
           @keyframes octocat-wave {
             0%, 100% {
               transform: rotate(0);
@@ -51,13 +51,13 @@ const GitHubBadge = () => {
               transform: rotate(10deg);
             }
           }
-          
+
           @media (max-width: 500px) {
             svg:hover .octo-arm {
               animation: none;
             }
             .octo-arm {
-              animation: octocat-wave 560ms ease-in-out;
+              animation: octocat-wave 300ms ease-in-out;
             }
           }
         `}

@@ -4,6 +4,9 @@
  
 @layer base {
   :root {
+    /* Typography - Font Family (Principle B.1) */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -31,8 +34,13 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
+
+    /* Border Radius Scale (Principle E.3) */
+    --radius-sm: 0.25rem;  /* 4px */
+    --radius-md: 0.5rem;   /* 8px */
+    --radius: 0.5rem;      /* 8px - kept for backward compatibility */
+    --radius-lg: 1rem;     /* 16px */
+    --radius-xl: 1.5rem;   /* 24px */
     
     /* Enhanced shadow system following principle 8 */
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
@@ -98,6 +106,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-family);
   }
 }
 
