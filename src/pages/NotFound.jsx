@@ -7,7 +7,7 @@ const NotFound = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="empty-state max-w-lg">
         <div className="text-center">
-          <h1 className="text-[6rem] font-bold text-muted-foreground/30 mb-4 leading-none">
+          <h1 className="text-[clamp(4rem,10vw,6rem)] font-bold text-muted-foreground/30 mb-4 leading-none">
             404
           </h1>
           <h2 className="empty-state-title mb-3">Page Not Found</h2>

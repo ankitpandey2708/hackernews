@@ -188,7 +188,7 @@ const HackerNews = () => {
 
   return (
     <ErrorBoundary>
-      <div className="container mx-auto px-6 py-8">
+      <div className="container max-w-7xl mx-auto px-6 py-8">
         <GitHubBadge />
         
         <header className="mb-12">
@@ -220,7 +220,7 @@ const HackerNews = () => {
                 Use commas to separate multiple search terms
               </p>
             </div>
-            <div className="form-group w-full lg:w-48">
+            <div className="form-group w-full lg:w-32">
               <label htmlFor="upvotes" className="form-label">
                 Minimum Upvotes
               </label>
