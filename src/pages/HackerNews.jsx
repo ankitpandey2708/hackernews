@@ -21,7 +21,7 @@ const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) =>
         size="icon"
         className="btn-remove absolute top-4 right-4"
         onClick={() => onRemove(story.objectID)}
-        aria-label={`Remove "${story.title}" from list`}
+        aria-label={`Remove story`}
       >
         <X className="h-4 w-4" />
       </Button>
