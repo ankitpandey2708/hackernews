@@ -123,7 +123,7 @@ const ErrorMessage = ({ error, onRetry }) => (
 );
 
 const HackerNews = () => {
-  const [searchTerm, setSearchTerm] = useState('hn:,llm,gpt,claude,gemini,open,fast,tube,github,crunch,reddit,mcp,agent,ai ,rag ,cursor');
+  const [searchTerm, setSearchTerm] = useState('hn:,llm,gpt,claude,gemini,open,fast,tube,github,crunch,reddit,mcp,agent,ai ,rag ,cursor,google');
   const [minPoints, setMinPoints] = useState('');
   const [clickedLinks, setClickedLinks] = useLocalStorage('clickedLinks', {});
   const [removedStories, setRemovedStories] = useLocalStorage('removedStories', {});
