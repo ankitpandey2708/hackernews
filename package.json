@@ -21,7 +21,7 @@
     "lovable-tagger": "^1.1.8",
     "lucide-react": "^0.417.0",
     "react": "^18.2.0",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.11.3",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
     "sonner": "^1.5.0",
