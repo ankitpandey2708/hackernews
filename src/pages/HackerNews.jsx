@@ -6,8 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from 'date-fns';
 import { X, ExternalLink, MessageSquare, CalendarIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GitHubBadge from '@/components/GitHubBadge';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
@@ -266,31 +264,21 @@ const HackerNews = () => {
               </p>
             </div>
             <div className="form-group w-full lg:w-48">
-              <label className="form-label">
+              <label htmlFor="remove-date" className="form-label">
                 Remove Before Date
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    <span>Pick a date</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    onSelect={handleRemoveBeforeDate}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <p className="text-hierarchy-xs text-muted-foreground mt-1">
+              <Input
+                id="remove-date"
+                type="date"
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleRemoveBeforeDate(new Date(e.target.value));
+                  }
+                }}
+                className="w-full"
+                aria-describedby="remove-date-help"
+              />
+              <p id="remove-date-help" className="text-hierarchy-xs text-muted-foreground mt-1">
                 Remove all stories before date
               </p>
             </div>
