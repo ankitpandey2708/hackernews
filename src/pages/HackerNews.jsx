@@ -4,12 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from 'date-fns';
-import { X, ExternalLink, MessageSquare } from 'lucide-react';
+import { X, ExternalLink, MessageSquare, CalendarIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import GitHubBadge from '@/components/GitHubBadge';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { cn } from '@/lib/utils';
 
 const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) => {
   const hasExternalUrl = Boolean(story.url);
@@ -186,6 +189,25 @@ const HackerNews = () => {
     setRemovedStories(prev => ({ ...prev, [storyId]: true }));
   };
 
+  const handleRemoveBeforeDate = (date) => {
+    if (!date) return;
+    
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    const storiesToRemove = {};
+    sortedStories.forEach(story => {
+      const storyDate = new Date(story.created_at);
+      storyDate.setHours(0, 0, 0, 0);
+      
+      if (storyDate < selectedDate) {
+        storiesToRemove[story.objectID] = true;
+      }
+    });
+    
+    setRemovedStories(prev => ({ ...prev, ...storiesToRemove }));
+  };
+
   return (
     <ErrorBoundary>
       <div className="container max-w-7xl mx-auto px-6 py-8">
@@ -241,6 +263,35 @@ const HackerNews = () => {
               />
               <p id="upvotes-help" className="text-hierarchy-xs text-muted-foreground mt-1">
                 Filter by story popularity
+              </p>
+            </div>
+            <div className="form-group w-full lg:w-48">
+              <label className="form-label">
+                Remove Before Date
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <span>Pick a date</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    onSelect={handleRemoveBeforeDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <p className="text-hierarchy-xs text-muted-foreground mt-1">
+                Remove all stories before date
               </p>
             </div>
           </div>
