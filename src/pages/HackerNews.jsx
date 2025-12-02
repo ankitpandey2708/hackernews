@@ -4,13 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from 'date-fns';
-import { X, ExternalLink, MessageSquare, CalendarIcon } from 'lucide-react';
+import { X, ExternalLink, MessageSquare } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import GitHubBadge from '@/components/GitHubBadge';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { cn } from '@/lib/utils';
 
 const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) => {
   const hasExternalUrl = Boolean(story.url);
@@ -75,7 +74,7 @@ const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) =>
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors duration-200"
-                aria-label={`View on Hacker News`}
+                aria-label={`View on Hacker News - ${format(new Date(story.created_at), 'MMM d, yyyy')}`}
               >
                 {format(new Date(story.created_at), 'MMM d, yyyy')}
               </a>
@@ -187,25 +186,6 @@ const HackerNews = () => {
     setRemovedStories(prev => ({ ...prev, [storyId]: true }));
   };
 
-  const handleRemoveBeforeDate = (date) => {
-    if (!date) return;
-    
-    const selectedDate = new Date(date);
-    selectedDate.setHours(0, 0, 0, 0);
-    
-    const storiesToRemove = {};
-    sortedStories.forEach(story => {
-      const storyDate = new Date(story.created_at);
-      storyDate.setHours(0, 0, 0, 0);
-      
-      if (storyDate < selectedDate) {
-        storiesToRemove[story.objectID] = true;
-      }
-    });
-    
-    setRemovedStories(prev => ({ ...prev, ...storiesToRemove }));
-  };
-
   return (
     <ErrorBoundary>
       <div className="container max-w-7xl mx-auto px-6 py-8">
@@ -261,25 +241,6 @@ const HackerNews = () => {
               />
               <p id="upvotes-help" className="text-hierarchy-xs text-muted-foreground mt-1">
                 Filter by story popularity
-              </p>
-            </div>
-            <div className="form-group w-full lg:w-48">
-              <label htmlFor="remove-date" className="form-label">
-                Remove Before Date
-              </label>
-              <Input
-                id="remove-date"
-                type="date"
-                onChange={(e) => {
-                  if (e.target.value) {
-                    handleRemoveBeforeDate(new Date(e.target.value));
-                  }
-                }}
-                className="w-full"
-                aria-describedby="remove-date-help"
-              />
-              <p id="remove-date-help" className="text-hierarchy-xs text-muted-foreground mt-1">
-                Remove all stories before date
               </p>
             </div>
           </div>
