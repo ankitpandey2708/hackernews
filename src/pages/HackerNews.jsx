@@ -74,7 +74,7 @@ const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks }) =>
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors duration-200"
-                aria-label={`View on Hacker News - ${format(new Date(story.created_at), 'MMM d, yyyy')}`}
+                aria-label={`View on Hacker News`}
               >
                 {format(new Date(story.created_at), 'MMM d, yyyy')}
               </a>
