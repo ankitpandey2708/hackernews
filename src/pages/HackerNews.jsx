@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { X, ExternalLink, MessageSquare, TrendingUp, Search, Filter, RefreshCw, Inbox } from 'lucide-react';
+import { X, ExternalLink, MessageSquare, TrendingUp, Search, Filter, RefreshCw, Inbox, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 import { fetchHNStories, getStoryUrl } from '@/lib/services/hnApi';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -160,6 +160,7 @@ const HackerNews = () => {
   const [minPoints, setMinPoints] = useState('');
   const [clickedLinks, setClickedLinks] = useLocalStorage('clickedLinks', {});
   const [removedStories, setRemovedStories] = useLocalStorage('removedStories', {});
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
 
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
     queryKey: ['hnStories', minPoints],
@@ -242,59 +243,91 @@ const HackerNews = () => {
             ◆
           </div>
 
-          {/* Filter Controls */}
+          {/* Filter Controls - Collapsible */}
           <section
             className="mb-10 sm:mb-12 animate-fade-up stagger-3"
             aria-label="Story filters"
           >
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-              {/* Search input */}
-              <div className="flex-1">
-                <label htmlFor="search" className="input-label flex items-center gap-2">
-                  <Search className="w-3 h-3" aria-hidden="true" />
-                  Search Stories
-                </label>
-                <div className="relative">
-                  <input
-                    id="search"
-                    type="text"
-                    placeholder="Enter keywords, separated by commas..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="input-neo"
-                    autoFocus
-                    aria-describedby="search-hint"
-                  />
-                </div>
-                <p id="search-hint" className="mt-2 text-xs text-muted-foreground/60 font-mono">
-                  Comma-separated terms use OR logic
-                </p>
+            {/* Toggle Button */}
+            <button
+              onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg bg-card border border-border hover:border-primary/30 transition-colors group"
+              aria-expanded={isFiltersExpanded}
+              aria-controls="filter-content"
+            >
+              <div className="flex items-center gap-3">
+                <SlidersHorizontal className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="font-mono text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Filters
+                </span>
+                {(searchTerm || minPoints) && (
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono">
+                    Active
+                  </span>
+                )}
               </div>
+              {isFiltersExpanded ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              )}
+            </button>
 
-              {/* Min points filter */}
-              <div className="w-full lg:w-40">
-                <label htmlFor="upvotes" className="input-label flex items-center gap-2">
-                  <Filter className="w-3 h-3" aria-hidden="true" />
-                  Min Upvotes
-                </label>
-                <input
-                  id="upvotes"
-                  type="number"
-                  placeholder="15"
-                  value={minPoints}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === '' || parseInt(value) > 0) {
-                      setMinPoints(value);
-                    }
-                  }}
-                  className="input-neo"
-                  min="1"
-                  aria-describedby="upvotes-hint"
-                />
-                <p id="upvotes-hint" className="mt-2 text-xs text-muted-foreground/60 font-mono">
-                  Filters by popularity
-                </p>
+            {/* Collapsible Content */}
+            <div
+              id="filter-content"
+              className={`overflow-hidden transition-all duration-300 ease-out ${
+                isFiltersExpanded ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 p-4 rounded-lg bg-card/50 border border-border/50">
+                {/* Search input */}
+                <div className="flex-1">
+                  <label htmlFor="search" className="input-label flex items-center gap-2">
+                    <Search className="w-3 h-3" aria-hidden="true" />
+                    Search Stories
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="search"
+                      type="text"
+                      placeholder="Enter keywords, separated by commas..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="input-neo"
+                      aria-describedby="search-hint"
+                    />
+                  </div>
+                  <p id="search-hint" className="mt-2 text-xs text-muted-foreground/60 font-mono">
+                    Comma-separated terms use OR logic
+                  </p>
+                </div>
+
+                {/* Min points filter */}
+                <div className="w-full lg:w-40">
+                  <label htmlFor="upvotes" className="input-label flex items-center gap-2">
+                    <Filter className="w-3 h-3" aria-hidden="true" />
+                    Min Upvotes
+                  </label>
+                  <input
+                    id="upvotes"
+                    type="number"
+                    placeholder="15"
+                    value={minPoints}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '' || parseInt(value) > 0) {
+                        setMinPoints(value);
+                      }
+                    }}
+                    className="input-neo"
+                    min="1"
+                    aria-describedby="upvotes-hint"
+                  />
+                  <p id="upvotes-hint" className="mt-2 text-xs text-muted-foreground/60 font-mono">
+                    Filters by popularity
+                  </p>
+                </div>
               </div>
             </div>
           </section>
