@@ -27,7 +27,7 @@ const StoryCard = React.memo(({ story, onRemove, onLinkClick, clickedLinks, inde
       <button
         className="btn-dismiss touch-target"
         onClick={() => onRemove(story.objectID)}
-        aria-label={`Remove "${story.title}" from feed`}
+        aria-label={`Remove story`}
       >
         <X className="w-4 h-4" />
       </button>
