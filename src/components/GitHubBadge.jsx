@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const GitHubBadge = () => {
   return (
     <a
       href="https://github.com/ankitpandey2708/hackernews"
-      className="fixed top-0 right-0 z-[100]"
+      className="github-badge group"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="View source on GitHub"
@@ -16,7 +15,11 @@ const GitHubBadge = () => {
         width="80"
         height="80"
         viewBox="0 0 250 250"
-        className="absolute top-0 right-0 border-0 fill-black text-white"
+        className="absolute top-0 right-0 border-0 transition-colors duration-200"
+        style={{
+          fill: 'hsl(var(--primary))',
+          color: 'hsl(var(--primary-foreground))',
+        }}
         aria-hidden="true"
       >
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" />
@@ -36,7 +39,17 @@ const GitHubBadge = () => {
       </svg>
       <style>
         {`
-          svg:hover .octo-arm {
+          .github-badge svg {
+            opacity: 0.7;
+            transition: opacity 0.2s ease, filter 0.2s ease;
+          }
+
+          .github-badge:hover svg {
+            opacity: 1;
+            filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.4));
+          }
+
+          .github-badge:hover .octo-arm {
             animation: octocat-wave 300ms ease-in-out;
           }
 
@@ -53,7 +66,7 @@ const GitHubBadge = () => {
           }
 
           @media (max-width: 500px) {
-            svg:hover .octo-arm {
+            .github-badge:hover .octo-arm {
               animation: none;
             }
             .octo-arm {
