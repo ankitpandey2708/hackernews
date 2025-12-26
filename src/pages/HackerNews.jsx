@@ -220,7 +220,7 @@ const HackerNews = () => {
       <Helmet>
         <title>HN Digest — Curated Tech Intelligence</title>
         <meta name="description" content="Stay ahead with HN Digest - your curated source for top Hacker News stories. Filter by category, points, and date to discover trending tech news, discussions, and insights from the developer community." />
-        <link rel="canonical" href="https://hackernews.com/" />
+        <link rel="canonical" href="https://hackernews.lovable.app/" />
       </Helmet>
       <div className="min-h-screen">
         {/* Main container */}

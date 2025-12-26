@@ -9,7 +9,7 @@ Allow: /
 # Disallow: /private/
 
 # Sitemap location
-Sitemap: https://hackernews.com/sitemap.xml
+Sitemap: https://hackernews.lovable.app/sitemap.xml
 
 # Crawl-delay (optional, helps prevent overload)
 # Crawl-delay: 10
