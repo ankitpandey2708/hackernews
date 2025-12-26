@@ -1,11 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
+    <>
+      <Helmet>
+        <title>404 - Page Not Found | HN Digest</title>
+        <meta name="description" content="The page you're looking for could not be found. Return to HN Digest to discover curated tech intelligence from Hacker News." />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
+      <div className="min-h-screen flex items-center justify-center px-6">
       <div className="text-center animate-fade-up">
         {/* Large editorial-style 404 */}
         <h1 className="font-display text-[clamp(8rem,20vw,14rem)] font-normal italic text-muted-foreground/10 leading-none select-none mb-[-2rem]">
@@ -37,6 +44,7 @@ const NotFound = () => {
         <div className="mt-16 w-24 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto" />
       </div>
     </div>
+    </>
   );
 };
 

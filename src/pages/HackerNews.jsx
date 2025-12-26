@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { X, ExternalLink, MessageSquare, TrendingUp, Search, Filter, RefreshCw, Inbox, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
@@ -216,6 +217,11 @@ const HackerNews = () => {
 
   return (
     <ErrorBoundary>
+      <Helmet>
+        <title>HN Digest — Curated Tech Intelligence</title>
+        <meta name="description" content="Stay ahead with HN Digest - your curated source for top Hacker News stories. Filter by category, points, and date to discover trending tech news, discussions, and insights from the developer community." />
+        <link rel="canonical" href="https://hackernews.com/" />
+      </Helmet>
       <div className="min-h-screen">
         {/* Main container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
