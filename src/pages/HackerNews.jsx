@@ -208,11 +208,11 @@ const HackerNews = () => {
   }, [sortedStories, searchTerm]);
 
   const handleLinkClick = (objectID) => {
-    setClickedLinks(prev => ({ ...prev, [objectID]: true }));
+    setClickedLinks(prev => ({ ...prev, [objectID]: Date.now() }));
   };
 
   const handleRemoveStory = (storyId) => {
-    setRemovedStories(prev => ({ ...prev, [storyId]: true }));
+    setRemovedStories(prev => ({ ...prev, [storyId]: Date.now() }));
   };
 
   return (

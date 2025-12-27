@@ -13,7 +13,10 @@ const pruneIfNeeded = (data) => {
   if (currentSize > MAX_SIZE) {
     // Prune oldest 20% to free up space
     const entries = Object.entries(data);
+    // Sort by timestamp value (oldest first)
+    entries.sort((a, b) => a[1] - b[1]);
     const keepCount = Math.floor(entries.length * 0.8);
+    // Keep the newest 80%
     return Object.fromEntries(entries.slice(-keepCount));
   }
 
@@ -47,6 +50,8 @@ export function useLocalStorage(key, initialValue) {
       if (error.name === 'QuotaExceededError') {
         try {
           const entries = Object.entries(value);
+          // Sort by timestamp value (oldest first)
+          entries.sort((a, b) => a[1] - b[1]);
           const keepCount = Math.floor(entries.length * 0.5); // Keep only 50%
           const emergencyPruned = Object.fromEntries(entries.slice(-keepCount));
           window.localStorage.setItem(key, JSON.stringify(emergencyPruned));
