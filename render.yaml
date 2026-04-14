@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: hn-digest
+    env: elixir
+    region: oregon
+    plan: free
+    buildCommand: "mix deps.get --only prod && mix compile && mix assets.deploy"
+    startCommand: "mix phx.server"
+    envVars:
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: PHX_HOST
+        fromService:
+          type: web
+          name: hn-digest
+          property: host
+      - key: PORT
+        value: 4000
+      - key: MIX_ENV
+        value: prod

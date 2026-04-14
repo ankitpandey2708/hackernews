@@ -1,0 +1,17 @@
+# Build artifacts
+/_build/
+/deps/
+/priv/static/assets/
+
+# Generated on crash
+erl_crash.dump
+
+# Static analysis
+/.elixir_ls/
+
+# Node
+/assets/node_modules/
+
+# Secrets
+.env
+*.secret.exs

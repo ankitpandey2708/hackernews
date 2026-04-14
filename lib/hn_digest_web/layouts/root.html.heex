@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Stay ahead with HN Digest - your curated source for top Hacker News stories. Filter by category, points, and date to discover trending tech news."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://hn-digest.onrender.com/" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HN Digest — Curated Tech Intelligence" />
+    <meta
+      property="og:description"
+      content="Curated top Hacker News stories filtered by upvotes, date, and keyword."
+    />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="HN Digest — Curated Tech Intelligence" />
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "HN Digest",
+        "url": "https://hn-digest.onrender.com"
+      }
+    </script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <.live_title>HN Digest — Curated Tech Intelligence</.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body>
+    <%= @inner_content %>
+  </body>
+</html>
